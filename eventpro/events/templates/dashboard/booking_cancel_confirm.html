@@ -1,0 +1,14 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% block page_title %}Cancel Booking{% endblock %}
+{% block content %}
+<div class="confirm-card">
+  <div class="confirm-icon"><i class="fas fa-exclamation-triangle"></i></div>
+  <h3>Cancel booking {{ booking.invoice_number }}?</h3>
+  <p>This will cancel <strong>{{ booking.customer_name }}'s</strong> booking for <strong>{{ booking.event.title }}</strong>.</p>
+  <form method="post" class="confirm-actions">
+    {% csrf_token %}
+    <a href="{% url 'dashboard_bookings' %}" class="btn-dash-secondary">No, Keep</a>
+    <button type="submit" class="btn-danger">Yes, Cancel</button>
+  </form>
+</div>
+{% endblock %}

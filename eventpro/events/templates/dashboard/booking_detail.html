@@ -1,0 +1,39 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% block page_title %}Booking {{ booking.invoice_number }}{% endblock %}
+{% block active_bookings %}active{% endblock %}
+
+{% block content %}
+<div class="detail-card-dash">
+  <div class="dcd-header">
+    <h3>{{ booking.invoice_number }}</h3>
+    <span class="badge badge-{{ booking.status }}">{{ booking.status|title }}</span>
+  </div>
+  <div class="dcd-grid">
+    <div>
+      <h4>Customer</h4>
+      <p><strong>{{ booking.customer_name }}</strong></p>
+      <p>{{ booking.customer_email }}</p>
+      <p>{{ booking.customer_address }}</p>
+    </div>
+    <div>
+      <h4>Event</h4>
+      <p><strong>{{ booking.event.title }}</strong></p>
+      <p>{{ booking.event.date|date:"d M Y" }} at {{ booking.event.time|time:"h:i A" }}</p>
+      <p>{{ booking.event.venue }}</p>
+    </div>
+    <div>
+      <h4>Booking</h4>
+      <p>Quantity: <strong>{{ booking.quantity }}</strong></p>
+      <p>Price/seat: ₹{{ booking.event.price }}</p>
+      <p>Total: <strong>₹{{ booking.total_price }}</strong></p>
+      <p>Booked on: {{ booking.created_at|date:"d M Y" }}</p>
+    </div>
+  </div>
+  <div class="dcd-footer">
+    <a href="{% url 'dashboard_bookings' %}" class="btn-dash-secondary">← Back</a>
+    {% if booking.status == 'confirmed' %}
+    <a href="{% url 'booking_cancel' booking.pk %}" class="btn-danger">Cancel Booking</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

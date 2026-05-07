@@ -1,0 +1,138 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% block title %}Overview – Dashboard{% endblock %}
+{% block active_home %}active{% endblock %}
+{% block page_title %}Overview{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon purple"><i class="fas fa-calendar-alt"></i></div>
+    <div class="stat-info">
+      <span class="stat-label">Total Events</span>
+      <span class="stat-value">{{ total_events }}</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+    <div class="stat-info">
+      <span class="stat-label">Active Events</span>
+      <span class="stat-value">{{ active_events }}</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="fas fa-ticket-alt"></i></div>
+    <div class="stat-info">
+      <span class="stat-label">Total Bookings</span>
+      <span class="stat-value">{{ total_bookings }}</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon orange"><i class="fas fa-rupee-sign"></i></div>
+    <div class="stat-info">
+      <span class="stat-label">Total Revenue</span>
+      <span class="stat-value">₹{{ total_revenue|floatformat:0 }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Charts Row -->
+<div class="charts-row">
+  <div class="chart-card wide">
+    <h4>Monthly Revenue</h4>
+    <canvas id="revenueChart" height="80"></canvas>
+  </div>
+  <div class="chart-card">
+    <h4>Events by Category</h4>
+    <canvas id="categoryChart" height="200"></canvas>
+  </div>
+</div>
+
+<!-- Bookings per Event chart -->
+<div class="chart-card full">
+  <h4>Bookings per Event</h4>
+  <canvas id="bookingsChart" height="70"></canvas>
+</div>
+
+<!-- Recent Bookings -->
+<div class="table-card">
+  <div class="table-header">
+    <h4>Recent Bookings</h4>
+    <a href="{% url 'dashboard_bookings' %}">View All →</a>
+  </div>
+  <table class="dash-table">
+    <thead>
+      <tr>
+        <th>Invoice</th><th>Customer</th><th>Event</th><th>Amount</th><th>Status</th><th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for b in recent_bookings %}
+      <tr>
+        <td><code>{{ b.invoice_number }}</code></td>
+        <td>{{ b.customer_name }}</td>
+        <td>{{ b.event.title|truncatechars:25 }}</td>
+        <td>₹{{ b.total_price }}</td>
+        <td><span class="badge badge-{{ b.status }}">{{ b.status|title }}</span></td>
+        <td>{{ b.created_at|date:"d M Y" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="empty-row">No bookings yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const monthlyData = {{ monthly_revenue|safe }};
+const bookingsData = {{ bookings_per_event|safe }};
+const categoryData = {{ category_data|safe }};
+
+// Revenue Chart
+new Chart(document.getElementById('revenueChart'), {
+  type: 'line',
+  data: {
+    labels: monthlyData.map(d => d.month),
+    datasets: [{
+      label: 'Revenue (₹)',
+      data: monthlyData.map(d => d.revenue),
+      borderColor: '#7c3aed',
+      backgroundColor: 'rgba(124,58,237,0.1)',
+      tension: 0.4,
+      fill: true,
+      pointBackgroundColor: '#7c3aed',
+      pointRadius: 5,
+    }]
+  },
+  options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+});
+
+// Bookings per Event
+new Chart(document.getElementById('bookingsChart'), {
+  type: 'bar',
+  data: {
+    labels: bookingsData.map(d => d.name),
+    datasets: [{
+      label: 'Bookings',
+      data: bookingsData.map(d => d.count),
+      backgroundColor: ['#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0891b2'],
+      borderRadius: 6,
+    }]
+  },
+  options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+});
+
+// Category donut
+const catColors = ['#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0891b2'];
+new Chart(document.getElementById('categoryChart'), {
+  type: 'doughnut',
+  data: {
+    labels: categoryData.map(d => d.category),
+    datasets: [{ data: categoryData.map(d => d.count), backgroundColor: catColors, borderWidth: 0 }]
+  },
+  options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } }, cutout: '65%' }
+});
+</script>
+{% endblock %}

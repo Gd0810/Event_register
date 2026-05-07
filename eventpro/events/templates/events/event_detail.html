@@ -1,0 +1,42 @@
+{% extends 'events/base.html' %}
+{% load static %}
+{% block title %}{{ event.title }} – EventPro{% endblock %}
+{% block content %}
+<div class="detail-hero">
+  {% if event.photo %}
+  <img src="{{ event.photo.url }}" alt="{{ event.title }}" class="detail-cover">
+  {% else %}
+  <div class="detail-cover-placeholder"><i class="fas fa-image"></i></div>
+  {% endif %}
+  <div class="detail-overlay"></div>
+</div>
+<div class="container">
+  <div class="detail-grid">
+    <div class="detail-main">
+      <span class="detail-cat">{{ event.get_category_display }}</span>
+      <h1>{{ event.title }}</h1>
+      <div class="detail-meta-row">
+        <div class="meta-item"><i class="fas fa-calendar"></i> {{ event.date|date:"l, d F Y" }}</div>
+        <div class="meta-item"><i class="fas fa-clock"></i> {{ event.time|time:"h:i A" }}</div>
+        <div class="meta-item"><i class="fas fa-map-marker-alt"></i> {{ event.venue }}</div>
+        <div class="meta-item"><i class="fas fa-chair"></i> {{ event.available_seats }} seats left</div>
+      </div>
+      <div class="detail-description">
+        <h3>About this Event</h3>
+        <p>{{ event.description }}</p>
+      </div>
+    </div>
+    <aside class="detail-sidebar">
+      <div class="booking-card">
+        <div class="booking-price">₹{{ event.price }} <span>per seat</span></div>
+        {% if event.is_available %}
+        <a href="{% url 'book_event' event.pk %}" class="btn-primary-lg">Book Your Seat</a>
+        <p class="seats-left"><i class="fas fa-fire"></i> Only {{ event.available_seats }} seats remaining!</p>
+        {% else %}
+        <button class="btn-disabled" disabled>Sold Out / Expired</button>
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Dashboard – EventPro{% endblock %}</title>
+{% load static %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+<div class="dash-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sb-brand"><span>◆</span> EventPro</div>
+    <nav class="sb-nav">
+      <a href="{% url 'dashboard' %}" class="sb-link {% block active_home %}{% endblock %}">
+        <i class="fas fa-chart-pie"></i> Overview
+      </a>
+      <a href="{% url 'dashboard_events' %}" class="sb-link {% block active_events %}{% endblock %}">
+        <i class="fas fa-calendar-alt"></i> Events
+      </a>
+      <a href="{% url 'dashboard_bookings' %}" class="sb-link {% block active_bookings %}{% endblock %}">
+        <i class="fas fa-ticket-alt"></i> Bookings
+      </a>
+      <a href="{% url 'event_create' %}" class="sb-link sb-create">
+        <i class="fas fa-plus-circle"></i> New Event
+      </a>
+    </nav>
+    <div class="sb-footer">
+      <a href="{% url 'landing' %}" class="sb-link">
+        <i class="fas fa-globe"></i> View Site
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="dash-main">
+    <header class="dash-header">
+      <h2>{% block page_title %}Dashboard{% endblock %}</h2>
+      <div class="dash-header-right">
+        {% block header_action %}{% endblock %}
+      </div>
+    </header>
+    {% if messages %}
+    <div class="messages-bar">
+      {% for m in messages %}
+      <div class="msg msg-{{ m.tags }}">{{ m }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <div class="dash-content">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

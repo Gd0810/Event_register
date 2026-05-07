@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}EventPro{% endblock %}</title>
+{% load static %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/public.css' %}">
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="{% url 'landing' %}" class="nav-brand">
+      <span class="brand-icon">◆</span> EventPro
+    </a>
+    <div class="nav-links">
+      <a href="{% url 'landing' %}">Events</a>
+      <a href="{% url 'dashboard' %}" class="btn-nav">Dashboard</a>
+    </div>
+  </div>
+</nav>
+<main>{% block content %}{% endblock %}</main>
+<footer class="site-footer">
+  <p>© 2025 EventPro. All rights reserved.</p>
+</footer>
+<script src="{% static 'js/public.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

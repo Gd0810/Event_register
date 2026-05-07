@@ -1,0 +1,27 @@
+{% extends 'events/base.html' %}
+{% block title %}Booking Confirmed!{% endblock %}
+{% block content %}
+<div class="container success-page">
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <h1>Booking Confirmed!</h1>
+    <p>Thank you, <strong>{{ booking.customer_name }}</strong>! Your booking is confirmed.</p>
+    <p>An invoice has been sent to <strong>{{ booking.customer_email }}</strong></p>
+
+    <div class="invoice-preview">
+      <h3>Booking Summary</h3>
+      <table class="inv-table">
+        <tr><td>Invoice #</td><td>{{ booking.invoice_number }}</td></tr>
+        <tr><td>Event</td><td>{{ booking.event.title }}</td></tr>
+        <tr><td>Date</td><td>{{ booking.event.date|date:"d M Y" }}</td></tr>
+        <tr><td>Venue</td><td>{{ booking.event.venue }}</td></tr>
+        <tr><td>Seats</td><td>{{ booking.quantity }}</td></tr>
+        <tr><td>Total Paid</td><td><strong>₹{{ booking.total_price }}</strong></td></tr>
+        <tr><td>Status</td><td><span class="badge-confirmed">{{ booking.status|title }}</span></td></tr>
+      </table>
+    </div>
+
+    <a href="{% url 'landing' %}" class="btn-primary-lg" style="margin-top:2rem">Browse More Events</a>
+  </div>
+</div>
+{% endblock %}

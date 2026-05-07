@@ -1,0 +1,72 @@
+{% extends 'events/base.html' %}
+{% load static %}
+{% block title %}EventPro – Discover Amazing Events{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <span class="hero-tag">✦ Live Events &amp; Experiences</span>
+    <h1>Find Your Next<br><em>Unforgettable</em><br>Experience</h1>
+    <p>Discover concerts, workshops, conferences and more — book your seat in seconds.</p>
+    <form class="search-bar" method="get" action="">
+      <input type="text" name="search" placeholder="Search events, venues…" value="{{ search }}">
+      <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
+  </div>
+</section>
+
+<section class="events-section">
+  <div class="container">
+    <div class="filter-bar">
+      <a href="?" class="pill {% if not selected_category %}active{% endif %}">All</a>
+      {% for value, label in categories %}
+      <a href="?category={{ value }}{% if search %}&search={{ search }}{% endif %}"
+         class="pill {% if selected_category == value %}active{% endif %}">{{ label }}</a>
+      {% endfor %}
+    </div>
+
+    {% if events %}
+    <div class="events-grid">
+      {% for event in events %}
+      <article class="event-card">
+        <div class="card-image">
+          {% if event.photo %}
+          <img src="{{ event.photo.url }}" alt="{{ event.title }}">
+          {% else %}
+          <div class="card-image-placeholder">
+            <i class="fas fa-calendar-star"></i>
+          </div>
+          {% endif %}
+          <span class="card-category">{{ event.get_category_display }}</span>
+          {% if not event.is_available %}
+          <span class="card-sold-out">Sold Out</span>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span><i class="fas fa-calendar"></i> {{ event.date|date:"d M Y" }}</span>
+            <span><i class="fas fa-clock"></i> {{ event.time|time:"h:i A" }}</span>
+          </div>
+          <h3>{{ event.title }}</h3>
+          <p class="card-venue"><i class="fas fa-map-marker-alt"></i> {{ event.venue }}</p>
+          <div class="card-footer">
+            <span class="card-price">₹{{ event.price }}</span>
+            <a href="{% url 'event_detail' event.pk %}" class="btn-book {% if not event.is_available %}disabled{% endif %}">
+              {% if event.is_available %}Book Now{% else %}Unavailable{% endif %}
+            </a>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-calendar-xmark"></i>
+      <h3>No events found</h3>
+      <p>Try a different search or category.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

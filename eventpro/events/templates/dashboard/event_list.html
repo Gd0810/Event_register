@@ -1,0 +1,41 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% block title %}Events – Dashboard{% endblock %}
+{% block active_events %}active{% endblock %}
+{% block page_title %}Events{% endblock %}
+{% block header_action %}<a href="{% url 'event_create' %}" class="btn-dash-primary"><i class="fas fa-plus"></i> New Event</a>{% endblock %}
+
+{% block content %}
+<div class="table-card">
+  <table class="dash-table">
+    <thead>
+      <tr><th>Photo</th><th>Title</th><th>Category</th><th>Date</th><th>Price</th><th>Seats</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for event in events %}
+      <tr>
+        <td>
+          {% if event.photo %}
+          <img src="{{ event.photo.url }}" class="tbl-thumb">
+          {% else %}<span class="tbl-no-img"><i class="fas fa-image"></i></span>{% endif %}
+        </td>
+        <td><strong>{{ event.title }}</strong></td>
+        <td>{{ event.get_category_display }}</td>
+        <td>{{ event.date|date:"d M Y" }}</td>
+        <td>₹{{ event.price }}</td>
+        <td>{{ event.available_seats }}/{{ event.total_seats }}</td>
+        <td>
+          {% if event.is_active %}<span class="badge badge-confirmed">Active</span>
+          {% else %}<span class="badge badge-cancelled">Inactive</span>{% endif %}
+        </td>
+        <td class="actions">
+          <a href="{% url 'event_edit' event.pk %}" class="act-btn edit"><i class="fas fa-pen"></i></a>
+          <a href="{% url 'event_delete' event.pk %}" class="act-btn del"><i class="fas fa-trash"></i></a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8" class="empty-row">No events yet. <a href="{% url 'event_create' %}">Create one!</a></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
