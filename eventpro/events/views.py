@@ -79,6 +79,31 @@ def send_invoice_email(booking):
 
 # ─── DASHBOARD VIEWS ─────────────────────────────────────────────────────────
 
+def send_cancellation_email(booking):
+    subject = f'Booking Cancelled - {booking.invoice_number}'
+    html_content = f"""
+    <h2>Booking Cancelled</h2>
+    <p>Hello {booking.customer_name},</p>
+    <p>Your booking has been cancelled successfully.</p>
+    <p><strong>Invoice No:</strong> {booking.invoice_number}</p>
+    <p><strong>Event:</strong> {booking.event.title}</p>
+    <p><strong>Date:</strong> {booking.event.date}</p>
+    <p><strong>Time:</strong> {booking.event.time}</p>
+    <p><strong>Venue:</strong> {booking.event.venue}</p>
+    <p><strong>Seats:</strong> {booking.quantity}</p>
+    <p><strong>Status:</strong> Cancelled</p>
+    <p>Thank you,<br>EventPro</p>
+    """
+    email = EmailMessage(
+        subject=subject,
+        body=html_content,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[booking.customer_email],
+    )
+    email.content_subtype = 'html'
+    email.send()
+
+
 def dashboard(request):
     total_events = Event.objects.count()
     active_events = Event.objects.filter(is_active=True).count()
@@ -186,6 +211,10 @@ def booking_cancel(request, pk):
         booking.save()
         booking.event.available_seats += booking.quantity
         booking.event.save()
+        try:
+            send_cancellation_email(booking)
+        except Exception as e:
+            print(f"Cancellation email error: {e}")
         messages.success(request, 'Booking cancelled.')
         return redirect('dashboard_bookings')
     return render(request, 'dashboard/booking_cancel_confirm.html', {'booking': booking})
